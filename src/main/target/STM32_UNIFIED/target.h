@@ -316,23 +316,7 @@
 #define USE_ACC
 #define USE_GYRO
 
-#define USE_ACC_MPU6050
-#define USE_GYRO_MPU6050
-#define USE_ACC_MPU6500
-#define USE_GYRO_MPU6500
-#define USE_ACC_SPI_MPU6000
-#define USE_GYRO_SPI_MPU6000
-#define USE_ACC_SPI_MPU6500
-#define USE_GYRO_SPI_MPU6500
-#define USE_ACC_SPI_ICM20689
-#define USE_GYRO_SPI_ICM20689
-#define USE_ACCGYRO_LSM6DSO
-#define USE_ACCGYRO_BMI160
-#define USE_ACCGYRO_BMI270
-#define USE_ACCGYRO_SPI_BMI088
-#define USE_GYRO_SPI_ICM42605
 #define USE_GYRO_SPI_ICM42688P
-#define USE_ACC_SPI_ICM42605
 #define USE_ACC_SPI_ICM42688P
 
 #define USE_MAG
@@ -347,17 +331,6 @@
 #define USE_MAG_AK8975
 
 #define USE_BARO
-#define USE_BARO_MS5611
-#define USE_BARO_SPI_MS5611
-#define USE_BARO_BMP085
-#define USE_BARO_BMP280
-#define USE_BARO_SPI_BMP280
-#define USE_BARO_BMP388
-#define USE_BARO_SPI_BMP388
-#define USE_BARO_LPS
-#define USE_BARO_SPI_LPS
-#define USE_BARO_QMP6988
-#define USE_BARO_SPI_QMP6988
 #define USE_BARO_DPS310
 #define USE_BARO_SPI_DPS310
 
@@ -367,11 +340,6 @@
 #define USE_FLASHFS
 #define USE_FLASHFS_LOOP
 #define USE_FLASH_TOOLS
-#define USE_FLASH_M25P16
-#define USE_FLASH_W25N01G          // 1Gb NAND flash support
-#define USE_FLASH_W25M             // Stacked die support
-#define USE_FLASH_W25M512          // 512Kb (256Kb x 2 stacked) NOR flash support
-#define USE_FLASH_W25M02G          // 2Gb (1Gb x 2 stacked) NAND flash support
 #define USE_FLASH_W25Q128FV        // 16MB Winbond 25Q128
 
 #define USE_SPI
