@@ -227,8 +227,12 @@ static inline float limitSpeed(float old, float new, float speed)
 #ifdef USE_SERVO_GEOMETRY_CORRECTION
 static float geometryCorrection(float pos)
 {
+    float signn = (pos > 0) ? 1.0f : -1.0f;
+    
+    float softened_pos = signn * powf(fabsf(pos), 0.72f); 
+    
     // 1.0 == 50° without correction
-    float height = constrainf(pos * 0.7660444431f, -1, 1);
+    float height = constrainf(softened_pos * 0.7660444431f, -1, 1);
 
     // Scale 50° in rad => 1.0
     float rotation = asin_approx(height) * 1.14591559026f;
