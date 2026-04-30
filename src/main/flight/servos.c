@@ -229,7 +229,7 @@ static float geometryCorrection(float pos)
 {
     float signn = (pos > 0) ? 1.0f : -1.0f;
     
-    float softened_pos = signn * powf(fabsf(pos), 0.88f); 
+    float softened_pos = signn * powf(fabsf(pos), 0.79f); 
     
     // 1.0 == 50° without correction
     float height = constrainf(softened_pos * 0.7660444431f, -1, 1);
