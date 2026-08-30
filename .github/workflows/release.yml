@@ -42,7 +42,9 @@ jobs:
     - name: Create Release
       run: |
         echo "Rotorflight Custom." > Notes.md
-        gh release create ${{ env.GIT_TAG }} --clobber --notes-file Notes.md --title "Rotorflight ${{ env.GH_TYPE }} ${{ env.GIT_VER }}" obj/*.hex
+        gh release create "${{ env.GIT_TAG }}" --notes-file Notes.md --title "Rotorflight ${{ env.GH_TYPE }} ${{ env.GIT_VER }}" || echo "Release already exists, proceeding to upload assets."
+        gh release upload "${{ env.GIT_TAG }}" obj/*.hex --clobber
+
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
