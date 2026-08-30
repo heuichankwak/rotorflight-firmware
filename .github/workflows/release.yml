@@ -35,14 +35,14 @@ jobs:
         echo "GIT_PRE=${GIT_PRE}" >> ${GITHUB_ENV}
         echo "GH_TYPE=${GH_TYPE}" >> ${GITHUB_ENV}
         cat ${GITHUB_ENV}
-
+ 
     - name: Build HEX files for unified targets
       run: make unified FC_VER_SUFFIX="${{ env.GIT_PRE }}" FLASH_CONFIG_ERASE=yes
  
     - name: Create Release
       run: |
         echo "Rotorflight Custom." > Notes.md
-        gh release create ${{ env.GIT_TAG }} --notes-file Notes.md --title "Rotorflight ${{ env.GH_TYPE }} ${{ env.GIT_VER }}" obj/*.hex
+        gh release create ${{ env.GIT_TAG }} --clobber --notes-file Notes.md --title "Rotorflight ${{ env.GH_TYPE }} ${{ env.GIT_VER }}" obj/*.hex
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
