@@ -936,14 +936,29 @@ static void pidApplyPrecomp(void)
   //// Collective-to-Pitch precomp
 
     // Collective component
-    const float pitchPrecomp = collectiveDeflection * pid.precomp.pitchCollectiveFFGain;
+    /*const float pitchPrecomp = collectiveDeflection * pid.precomp.pitchCollectiveFFGain;
 
     // Add to PITCH feedforward
     pid.data[FD_PITCH].F += pitchPrecomp;
     pid.data[FD_PITCH].pidSum += pitchPrecomp;
 
     DEBUG(PITCH_PRECOMP, 0, collectiveDeflection * 1000);
-    DEBUG(PITCH_PRECOMP, 1, pitchPrecomp * 1000);
+    DEBUG(PITCH_PRECOMP, 1, pitchPrecomp * 1000);*/
+
+//// Collective-to-Pitch precomp
+
+    // 1. Collective 제곱 비례 감쇠 스케일 계산 및 하한선 0.2 제한
+    const float collectiveNormalized = fabsf(collectiveDeflection);
+    const float collectiveScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain));
+
+    // 2. pidSum에서 기존 F를 빼고, 축소된 F를 더해줍니다. (순서 영향 없음)
+    pid.data[FD_PITCH].pidSum -= pid.data[FD_PITCH].F; // 기존 F 차감 (-)
+    pid.data[FD_PITCH].F *= collectiveScale;            // F를 스케일만큼 축소
+    pid.data[FD_PITCH].pidSum += pid.data[FD_PITCH].F; // 축소된 새 F 반영 (+)
+
+    DEBUG(PITCH_PRECOMP, 0, collectiveDeflection * 1000);
+    DEBUG(PITCH_PRECOMP, 1, collectiveScale * 1000);
+
 }
 
 static void pidApplyCyclicCrossCoupling(void)
