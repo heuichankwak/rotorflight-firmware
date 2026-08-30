@@ -1,4 +1,4 @@
-# 4.6.0-RC3
+# 4.6.0-RC4
 
 This is a _Release Candidate_ for the Rotorflight 2.3 firmware.
 
