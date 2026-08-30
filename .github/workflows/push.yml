@@ -3,8 +3,7 @@ name: Push-CI
 on:
   push:
     branches:
-      - 'master'
-      - 'RF-*'
+      - '*'
 
 env:
 
