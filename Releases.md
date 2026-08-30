@@ -1,3 +1,42 @@
+# 4.6.0-RC3
+
+This is a _Release Candidate_ for the Rotorflight 2.3 firmware.
+
+## Notes
+
+
+
+## Downloads
+
+
+
+## Changes since 4.6.0-RC2
+
+### New features
+
+
+### Improvements
+
+
+### Bug fixes
+
+
+## Changes since 4.5.1
+
+### New features
+
+- Collective to cyclic precomp
+ 
+### New hardware and protocol support
+
+
+### Improvements
+
+
+### Bug fixes
+
+***
+
 # 4.6.0
 
 This is the _Official Release_ of the Rotorflight firmware for RF 2.3.
