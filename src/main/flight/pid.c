@@ -949,7 +949,7 @@ static void pidApplyPrecomp(void)
 
     // 1. Collective 제곱 비례 감쇠 스케일 계산 및 하한선 0.2 제한
     const float collectiveNormalized = fabsf(collectiveDeflection);
-    const float collectiveScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain));
+    const float collectiveScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain*3.0f));
 
     // 2. pidSum에서 기존 F를 빼고, 축소된 F를 더해줍니다. (순서 영향 없음)
     pid.data[FD_PITCH].pidSum -= pid.data[FD_PITCH].F; // 기존 F 차감 (-)
