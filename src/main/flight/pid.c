@@ -901,7 +901,7 @@ static void pidApplyPrecomp(void)
     const float speedChange = difFilterApply(&pid.precomp.yawInertiaFilter, speedFiltered);
 
     // Momentum change precomp
-    const float torquePrecomp = speedChange * pid.precomp.yawInertiaGain;
+    const float torquePrecomp = speedChange * pid.precomp.yawInertiaGain * -1.0f;
 
 
   //// Collective-to-Yaw Precomp
