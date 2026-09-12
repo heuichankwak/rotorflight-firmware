@@ -968,7 +968,7 @@ static void pidApplyPrecomp(void)
     /// Collective-to-Cyclic Axis-Split Attenuation (최종 최적화 버전)
 
     // 1. 1000.0f 기준으로 비율 정규화 (0.0 ~ 1.0)
-    const float collectiveNormalized = fabsf(collectiveDeflection);
+    const float collectiveNormalized = fminf(1.0f, fabsf(collectiveDeflection) / 1000.0f);
 
     // 2. 제곱 비례 감쇄 베이스 공식 연산
     const float baseScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain * 4.0f));
@@ -988,7 +988,7 @@ static void pidApplyPrecomp(void)
     pid.data[FD_PITCH].pidSum += pid.data[FD_PITCH].F;
 
     // 4. 블랙박스 디버그 기록
-    DEBUG(PITCH_PRECOMP, 0, collectiveDeflection);
+    DEBUG(PITCH_PRECOMP, 0, collectiveDeflection * 1000);
     DEBUG(PITCH_PRECOMP, 1, pitchScale * 1000);
 
 }
