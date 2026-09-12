@@ -582,8 +582,8 @@ static void INIT_CODE pidInitFilters(const pidProfile_t *pidProfile)
     pt1FilterInit(&pid.offsetFloodRelaxFilter, 1, pid.freq);
 
     // [독점 필터 설정] 실측 지연시간(롤 22Hz / 피치 11Hz)을 초기화 시점에 딱 한 번 고정
-    pt1FilterInit(&rollAttenuationFilter, 33.0f, pid.freq);
-    pt1FilterInit(&pitchAttenuationFilter, 11.0f, pid.freq);
+    pt1FilterInit(&rollAttenuationFilter, 16.5f, pid.freq);
+    pt1FilterInit(&pitchAttenuationFilter, 5.5f, pid.freq);
 }
 
 void INIT_CODE pidLoadProfile(const pidProfile_t *pidProfile)
