@@ -582,8 +582,8 @@ static void INIT_CODE pidInitFilters(const pidProfile_t *pidProfile)
     pt1FilterInit(&pid.offsetFloodRelaxFilter, 1, pid.freq);
 
     // [독점 필터 설정] 실측 지연시간(롤 22Hz / 피치 11Hz)을 초기화 시점에 딱 한 번 고정
-    pt1FilterInit(&rollAttenuationFilter, 16.5f, pid.freq);
-    pt1FilterInit(&pitchAttenuationFilter, 5.5f, pid.freq);
+    pt1FilterInit(&rollAttenuationFilter, 13.0f, pid.freq);
+    pt1FilterInit(&pitchAttenuationFilter, 6.5f, pid.freq);
 }
 
 void INIT_CODE pidLoadProfile(const pidProfile_t *pidProfile)
@@ -968,7 +968,7 @@ static void pidApplyPrecomp(void)
     /// Collective-to-Cyclic Axis-Split Attenuation (최종 최적화 버전)
 
     // 1. 1000.0f 기준으로 비율 정규화 (0.0 ~ 1.0)
-    const float collectiveNormalized = fabsf(collectiveDeflection);
+    const float collectiveNormalized = fminf(1.0f, fabsf(collectiveDeflection));
 
     // 2. 제곱 비례 감쇄 베이스 공식 연산
     const float baseScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain * 4.0f));
