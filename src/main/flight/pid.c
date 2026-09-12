@@ -73,7 +73,9 @@ static const uint8_t offset_bleed_limit_curve[PID_LOOKUP_CURVE_POINTS] = { 0,0,0
 
 static const uint8_t offset_charge_curve[PID_LOOKUP_CURVE_POINTS]      = { 0,100,100,100,100,100,95,90,82,76,72,68,65,62,60,58 };
 static const uint8_t offset_flood_curve[PID_LOOKUP_CURVE_POINTS]       = { 0,0,0,20,50,100,180,220,220,220,220,220,220,220,220,220 };
-
+// 다른 기능들과 절대 꼬이지 않는 나만의 독립 필터 구조체 선언
+static pt1Filter_t rollAttenuationFilter;
+static pt1Filter_t pitchAttenuationFilter;
 
 //// Access functions
 
@@ -578,6 +580,10 @@ static void INIT_CODE pidInitFilters(const pidProfile_t *pidProfile)
 
     // Offset flood filter
     pt1FilterInit(&pid.offsetFloodRelaxFilter, 1, pid.freq);
+
+    // [독점 필터 설정] 실측 지연시간(롤 22Hz / 피치 11Hz)을 초기화 시점에 딱 한 번 고정
+    pt1FilterInit(&rollAttenuationFilter, 33.0f, pid.freq);
+    pt1FilterInit(&pitchAttenuationFilter, 11.0f, pid.freq);
 }
 
 void INIT_CODE pidLoadProfile(const pidProfile_t *pidProfile)
@@ -945,10 +951,10 @@ static void pidApplyPrecomp(void)
     DEBUG(PITCH_PRECOMP, 0, collectiveDeflection * 1000);
     DEBUG(PITCH_PRECOMP, 1, pitchPrecomp * 1000);*/
 
-//// Collective-to-Pitch precomp
+    //// Collective-to-Pitch precomp -> Feedforward attenuation
 
     // 1. Collective 제곱 비례 감쇠 스케일 계산 및 하한선 0.2 제한
-    const float collectiveNormalized = fabsf(collectiveDeflection);
+    /*const float collectiveNormalized = fabsf(collectiveDeflection);
     const float collectiveScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain*4.0f));
 
     // 2. pidSum에서 기존 F를 빼고, 축소된 F를 더해줍니다. (순서 영향 없음)
@@ -957,7 +963,33 @@ static void pidApplyPrecomp(void)
     pid.data[FD_PITCH].pidSum += pid.data[FD_PITCH].F; // 축소된 새 F 반영 (+)
 
     DEBUG(PITCH_PRECOMP, 0, collectiveDeflection * 1000);
-    DEBUG(PITCH_PRECOMP, 1, collectiveScale * 1000);
+    DEBUG(PITCH_PRECOMP, 1, collectiveScale * 1000);*/
+
+    /// Collective-to-Cyclic Axis-Split Attenuation (최종 최적화 버전)
+
+    // 1. 1000.0f 기준으로 비율 정규화 (0.0 ~ 1.0)
+    const float collectiveNormalized = fabsf(collectiveDeflection);
+
+    // 2. 제곱 비례 감쇄 베이스 공식 연산
+    const float baseScale = fmaxf(0.2f, 1.0f - (collectiveNormalized * collectiveNormalized * pid.precomp.pitchCollectiveFFGain * 4.0f));
+
+    // 3. 초기화된 독립 필터를 통과시켜 롤/피치 축의 FF 감쇄 즉시 수행
+    
+    // [ROLL 축 감쇄] (22Hz 반영된 필터 통과)
+    float rollScale = pt1FilterApply(&rollAttenuationFilter, baseScale);
+    pid.data[FD_ROLL].pidSum -= pid.data[FD_ROLL].F;
+    pid.data[FD_ROLL].F *= rollScale;
+    pid.data[FD_ROLL].pidSum += pid.data[FD_ROLL].F;
+
+    // [PITCH 축 감쇄] (11Hz 반영된 필터 통과)
+    float pitchScale = pt1FilterApply(&pitchAttenuationFilter, baseScale);
+    pid.data[FD_PITCH].pidSum -= pid.data[FD_PITCH].F;
+    pid.data[FD_PITCH].F *= pitchScale;
+    pid.data[FD_PITCH].pidSum += pid.data[FD_PITCH].F;
+
+    // 4. 블랙박스 디버그 기록
+    DEBUG(PITCH_PRECOMP, 0, collectiveDeflection);
+    DEBUG(PITCH_PRECOMP, 1, pitchScale * 1000);
 
 }
 
